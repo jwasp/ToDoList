@@ -6,13 +6,15 @@ type AddItemFormPropsType = {
     addItem: (title: string) => void
 }
 
-function AddItemForm(props: AddItemFormPropsType) {
+export const AddItemForm = React.memo((props: AddItemFormPropsType) => {
     const [title, setTitle] = useState<string>("")
-    const [error, setError] = useState<boolean>(false)
+    const [error, setError] = useState<string | null>(null)
+
+    console.log("AddItemForm")
 
     const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
+        setError(null)
         setTitle(e.currentTarget.value)
-        setError(false)
     };
 
     const onClickAddItem = () => {
@@ -20,12 +22,15 @@ function AddItemForm(props: AddItemFormPropsType) {
         if(trimmedTitle) {
             props.addItem(trimmedTitle)
         } else {
-            setError(!error)
+            setError("Title is required")
         }
         setTitle("")
 
     }
     const onKeyPressAddItem = (e: KeyboardEvent<HTMLInputElement>) => {
+        if(error !== null) {
+            setError(null)
+        }
         if(e.key === "Enter"){
             onClickAddItem()
         }
@@ -36,7 +41,7 @@ function AddItemForm(props: AddItemFormPropsType) {
         <div>
             <TextField
                 variant={"outlined"}
-                error={error}
+                error={!!error}
                 value={title}
                 onChange={onChangeTitle}
                 onKeyPress={onKeyPressAddItem}
@@ -52,6 +57,6 @@ function AddItemForm(props: AddItemFormPropsType) {
 
         </div>
     )
-}
+})
 
 export default AddItemForm;
